@@ -18,7 +18,12 @@ app.use(methodOverride('_method'))
 
 //首頁路由
 app.get('/', (req, res) => {
-  res.render('index')
+  return Todo.findAll({
+    raw: true,
+    nest: true
+  })
+    .then((todos) => { return res.render('index', { todos: todos }) })
+    .catch((error) => { return res.status(422).json(error) })
 })
 
 //登入 註冊 登出路由
