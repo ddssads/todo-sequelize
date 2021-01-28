@@ -24,6 +24,12 @@ app.use(session({
   saveUninitialized: true
 }))
 usePassport(app)
+app.use((req, res, next) => {
+  console.log(req.user)
+  res.locals.isAuthenticated = req.isAuthenticated()
+  res.locals.user = req.user
+  next()
+})
 //首頁路由
 app.get('/', (req, res) => {
   return Todo.findAll({
@@ -33,7 +39,17 @@ app.get('/', (req, res) => {
     .then((todos) => { return res.render('index', { todos: todos }) })
     .catch((error) => { return res.status(422).json(error) })
 })
-
+//CRUD
+app.get('/todos/new', (req, res) => {
+  res.render('new')
+})
+app.post('/todos', (req, res) => {
+  const UserId = req.user.id
+  const name = req.body.name
+  return Todo.create({ name, UserId })
+    .then(() => res.redirect('/'))
+    .catch(error => console.log(error))
+})
 app.get('/todos/:id', (req, res) => {
   const id = req.params.id
   return Todo.findByPk(id)
