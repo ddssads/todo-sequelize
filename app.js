@@ -26,6 +26,13 @@ app.get('/', (req, res) => {
     .catch((error) => { return res.status(422).json(error) })
 })
 
+app.get('/todos/:id', (req, res) => {
+  const id = req.params.id
+  return Todo.findByPk(id)
+    .then(todo => res.render('detail', { todo: todo.toJSON() }))
+    .catch(error => console.log(error))
+})
+
 //登入 註冊 登出路由
 app.get('/', (req, res) => {
   res.send('hello world')
